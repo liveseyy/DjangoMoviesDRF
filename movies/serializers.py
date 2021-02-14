@@ -12,10 +12,12 @@ class FilterReviewListSerializer(serializers.ListSerializer):
 
 class MovieListSerializer(serializers.ModelSerializer):
     """Список фильмов"""
+    rating_user = serializers.BooleanField()
+    middle_star = serializers.IntegerField()
 
     class Meta:
         model = Movie
-        fields = ('title', 'tagline', 'category')
+        fields = ('title', 'tagline', 'category', 'rating_user', 'middle_star')
 
 
 class RecursiveSerializer(serializers.Serializer):
