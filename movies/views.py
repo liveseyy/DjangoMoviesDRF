@@ -10,12 +10,15 @@ from .serializers import (MovieListSerializer,
                           ActorListSerializer,
                           ActorDetailSerializer,
                           )
+from django_filters.rest_framework import DjangoFilterBackend
 
-from .service import get_client_ip
+from .service import get_client_ip, MovieFilter
 
 
 class MovieListView(generics.ListAPIView):
     serializer_class = MovieListSerializer
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = MovieFilter
 
     """Вывод списка фильмов"""
     def get_queryset(self):
