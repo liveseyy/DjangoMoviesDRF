@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import viewsets
 
 from django.db import models
 
@@ -15,8 +15,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .service import get_client_ip, MovieFilter
 
 
-class MovieListView(generics.ListAPIView):
-    serializer_class = MovieListSerializer
+class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend, )
     filterset_class = MovieFilter
 
@@ -29,34 +28,32 @@ class MovieListView(generics.ListAPIView):
         )
         return movies
 
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return MovieListSerializer
+        elif self.action == 'retrieve':
+            return MovieDetailSerializer
 
-class MovieDetailView(generics.RetrieveAPIView):
-    """Вывод фильма"""
-    queryset = Movie.objects.filter(draft=False)
-    serializer_class = MovieDetailSerializer
 
-
-class ReviewCreateView(generics.CreateAPIView):
+class ReviewCreateViewSet(viewsets.ModelViewSet):
     """Добавление отзыва к фильму"""
     serializer_class = ReviewCreateSerializer
 
 
-class AddStarRatingView(generics.CreateAPIView):
+class AddStarRatingViewSet(viewsets.ModelViewSet):
     """Добавление рейтинга фильму"""
-
     serializer_class = CreateRatingSerializer
 
     def perform_create(self, serializer):
         serializer.save(ip=get_client_ip(self.request))
 
 
-class ActorsListView(generics.ListAPIView):
-    """Вывод списка актёров и режиссёров"""
+class ActorsViewSet(viewsets.ReadOnlyModelViewSet):
+    """Вывод актеров и режиссёров"""
     queryset = Actor.objects.all()
-    serializer_class = ActorListSerializer
 
-
-class ActorsDetailView(generics.RetrieveAPIView):
-    """Вывод описания актёра или режиссёра"""
-    queryset = Actor.objects.all()
-    serializer_class = ActorDetailSerializer
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ActorListSerializer
+        if self.action == 'retrieve':
+            return ActorDetailSerializer
