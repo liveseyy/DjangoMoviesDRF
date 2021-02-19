@@ -12,12 +12,13 @@ from .serializers import (MovieListSerializer,
                           )
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .service import get_client_ip, MovieFilter
+from .service import get_client_ip, MovieFilter, PaginationMovies
 
 
 class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend, )
     filterset_class = MovieFilter
+    pagination_class = PaginationMovies
 
     """Вывод списка фильмов"""
     def get_queryset(self):
